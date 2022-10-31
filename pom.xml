@@ -28,7 +28,8 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
+    <description>ShanHaiDBDoc-A Swiss Army Knife for generating data model documents (supports exporting Word/Excel)</description>
+    <url>https://github.com/SeeMountainSea/shanhai-dbdoc-maven-plugin</url>
     <scm>
         <url>https://github.com/SeeMountainSea/shanhai-dbdoc-maven-plugin</url>
         <connection>https://github.com/SeeMountainSea/shanhai-dbdoc-maven-plugin.git</connection>
@@ -119,6 +120,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-plugin-api</artifactId>
                     </plugin>
                 </plugins>
             </build>

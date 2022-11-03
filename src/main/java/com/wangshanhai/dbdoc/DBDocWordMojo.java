@@ -6,6 +6,7 @@ import com.wangshanhai.dbdoc.entity.DocInfo;
 import com.wangshanhai.dbdoc.entity.TableInfo;
 import com.wangshanhai.dbdoc.form.DBInfo;
 import com.wangshanhai.dbdoc.utils.JDBCUtils;
+import com.wangshanhai.dbdoc.utils.RegUtils;
 import com.wangshanhai.dbdoc.utils.WordUtil;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -85,13 +86,13 @@ public class DBDocWordMojo extends AbstractMojo {
     private void createDBInfo(XWPFDocument doc,DBInfo dbInfo, List<TableInfo> tableInfos,Connection connection) throws Exception {
         List<DocInfo> docInfos=new ArrayList<>();
         DocInfo docInfo=new DocInfo();
-        docInfo.setDbHost(dbInfo.getJdbcUrl().replaceAll("\\?[0-9A-Za-z=&_-]+","").replaceAll("[A-Za-z:]+//",""));
+        docInfo.setDbHost(RegUtils.getDBHost(dbInfo.getJdbcUrl()));
         docInfo.setDbUser(dbInfo.getUser());
         docInfo.setGenerateTime(DateUtil.now());
         docInfo.setTablesNum(tableInfos.size());
         docInfo.setDbName(connection.getCatalog());
         docInfo.setSchemaName(connection.getSchema());
-        docInfo.setDbType(dbInfo.getJdbcUrl().replaceAll("\\?[0-9A-Za-z=&_-]+","").split(":")[1]);
+        docInfo.setDbType(RegUtils.getDBType(dbInfo.getJdbcUrl()));
         docInfos.add(docInfo);
         //设置副标题
         WordUtil.setParagraph(doc,"模型概况" , "宋体", 12, 10, true, ParagraphAlignment.LEFT,1);

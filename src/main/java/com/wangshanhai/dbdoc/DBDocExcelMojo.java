@@ -10,6 +10,7 @@ import com.wangshanhai.dbdoc.entity.DocInfo;
 import com.wangshanhai.dbdoc.entity.TableInfo;
 import com.wangshanhai.dbdoc.form.DBInfo;
 import com.wangshanhai.dbdoc.utils.JDBCUtils;
+import com.wangshanhai.dbdoc.utils.RegUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -18,6 +19,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class DBDocExcelMojo extends AbstractMojo {
             WriteSheet writeTableInfoSheet = EasyExcel.writerSheet(1, "数据模型清单").head(TableInfo.class).build();
             WriteSheet writeColumnInfoSheet = EasyExcel.writerSheet(2, "数据模型明细").head(ColumnInfo.class).build();
             ExcelWriter excelWriter =EasyExcel.write(f).registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).build();
-            excelWriter.write(formatDBInfo(dbInfo,tableInfos,allColumnInfos),writeDbInfoSheet);
+            excelWriter.write(formatDBInfo(dbInfo,tableInfos,connection),writeDbInfoSheet);
             excelWriter.write(tableInfos,writeTableInfoSheet);
             excelWriter.write(allColumnInfos,writeColumnInfoSheet);
             excelWriter.finish();
@@ -79,23 +81,22 @@ public class DBDocExcelMojo extends AbstractMojo {
      *
      * @param dbInfo 数据库
      * @param tableInfos 数据表
-     * @param allColumnInfos  数据列
      *
      * @return java.util.List<com.wangshanhai.dbdoc.entity.DocInfo>
      * @author Fly.Sky
      * @since 2022/10/28 9:21
      * @update [序号][日期YYYY-MM-DD] [更改人姓名][变更描述]
      */
-    private List<DocInfo> formatDBInfo(DBInfo dbInfo, List<TableInfo> tableInfos,List<ColumnInfo> allColumnInfos){
+    private List<DocInfo> formatDBInfo(DBInfo dbInfo, List<TableInfo> tableInfos,Connection connection) throws SQLException {
         List<DocInfo> docInfos=new ArrayList<>();
         DocInfo docInfo=new DocInfo();
-        docInfo.setDbHost(dbInfo.getJdbcUrl().replaceAll("\\?[0-9A-Za-z=&_-]+","").replaceAll("[A-Za-z:]+//",""));
+        docInfo.setDbHost(RegUtils.getDBHost(dbInfo.getJdbcUrl()));
         docInfo.setDbUser(dbInfo.getUser());
         docInfo.setGenerateTime(DateUtil.now());
         docInfo.setTablesNum(tableInfos.size());
-        docInfo.setDbName(allColumnInfos.get(0).getTableCat());
-        docInfo.setSchemaName(allColumnInfos.get(0).getTableSchema());
-        docInfo.setDbType(dbInfo.getJdbcUrl().replaceAll("\\?[0-9A-Za-z=&_-]+","").split(":")[1]);
+        docInfo.setDbName(connection.getCatalog());
+        docInfo.setSchemaName(connection.getSchema());
+        docInfo.setDbType(RegUtils.getDBType(dbInfo.getJdbcUrl()));
         docInfos.add(docInfo);
         return docInfos;
     }

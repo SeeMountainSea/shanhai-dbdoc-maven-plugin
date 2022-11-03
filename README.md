@@ -23,6 +23,8 @@ ShanHaiDBDoc 主要提供以下能力：
 - 支持全类型数据库导出Word版本数据模型文档
 - 支持全类型数据库导出Excel版本数据模型文档
 - 原生支持国产信创数据库（只要你有数据库驱动，理论上兼容后续各类数据库）
+- 导出模型文档时建议使用单库进行（例如oracle）
+- 如果有更多Ideal,欢迎大家提PR
 
 ## 1.引入插件
 
@@ -32,7 +34,7 @@ ShanHaiDBDoc 主要提供以下能力：
             <plugin>
                 <groupId>com.wangshanhai.dbdoc</groupId>
                 <artifactId>dbdoc-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
                 <configuration>
                     <jdbcUrl>xxx</jdbcUrl><!--自己项目配置的JDBC URL-->
                     <user>xxx</user> <!--数据库用户名-->
